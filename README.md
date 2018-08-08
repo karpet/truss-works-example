@@ -33,3 +33,10 @@ CSV-formatted text to stdout. Example:
 ```
 % perl norm-csv.pl < sample.csv > sample-output.csv
 ```
+
+You can also run the demo:
+
+```
+% make demo
+```
+

@@ -104,6 +104,14 @@ sub normalize {
         $row_hash{ $headers->[$i] } = utf8ify($cell);
         $i++;
     }
+
+    # if any field is undef, it was not able to be encoded as UTF-8,
+    # so just warn and skip this row by returning undef
+    if ( grep { !defined $row_hash{$_} } keys %row_hash ) {
+        warn "Invalid encoding in row '$row'";
+        return undef;
+    }
+
     $row_hash{Timestamp}   = iso8601ify( $row_hash{Timestamp} );
     $row_hash{ZIP}         = pad_zero_zip( $row_hash{ZIP} );
     $row_hash{FullName}    = uc( $row_hash{FullName} );
@@ -129,18 +137,18 @@ sub main {
     while ( my $row = $csv->getline(*STDIN) ) {
         unless ($headers) {
             $headers = [@$row];    # dereference and re-reference in one line
+            $DEBUG and warn "HEADERS: " . dump($headers);
         }
         else {
             $DEBUG and warn dump $row;
 
             my $normed_row = normalize( $row, $headers );
+            next unless $normed_row;    # skip invalid rows
+
             $DEBUG and warn dump $normed_row;
 
             # re-assemble in proper order.
-            my @new_row;
-            for my $h (@$headers) {
-                push @new_row, $normed_row->{$h};
-            }
+            my @new_row = map { $normed_row->{$_} } @$headers;
 
             $csv->say( *STDOUT, \@new_row );
 
