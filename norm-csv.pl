@@ -2,6 +2,11 @@
 use strict;
 use warnings;
 
+# This is written in a procedural style.
+# It could easily be re-factored into a object oriented style
+# by encapsulating all the normalization functions as methods
+# in a class.
+
 use Search::Tools::UTF8 qw( find_bad_utf8 is_valid_utf8 to_utf8 debug_bytes );
 use Text::CSV_XS;
 use Data::Dump qw( dump );
@@ -74,6 +79,23 @@ sub iso8601ify {
     return $dt->strftime('%F %T %z');
 }
 
+sub pad_zero_zip {
+    my ($zip) = @_;
+    while ( length($zip) < 5 ) {
+        $zip = '0' . $zip;
+    }
+    return $zip;
+}
+
+sub floatify {
+    my ($hmsm) = @_;
+    my ( $hour, $min, $sec, $mill )
+        = ( $hmsm =~ m/^(\d+):(\d+):(\d+)\.(\d+)$/ );
+    return
+        sprintf( "%d.%d", ( ( $hour * 3600 ) + ( $min * 60 ) + $sec ),
+        $mill );
+}
+
 sub normalize {
     my ( $row, $headers ) = @_;
     my $i = 0;
@@ -82,7 +104,14 @@ sub normalize {
         $row_hash{ $headers->[$i] } = utf8ify($cell);
         $i++;
     }
-    $row_hash{Timestamp} = iso8601ify( $row_hash{Timestamp} );
+    $row_hash{Timestamp}   = iso8601ify( $row_hash{Timestamp} );
+    $row_hash{ZIP}         = pad_zero_zip( $row_hash{ZIP} );
+    $row_hash{FullName}    = uc( $row_hash{FullName} );
+    $row_hash{FooDuration} = floatify( $row_hash{FooDuration} );
+    $row_hash{BarDuration} = floatify( $row_hash{BarDuration} );
+    $row_hash{TotalDuration}
+        = $row_hash{FooDuration} + $row_hash{BarDuration};
+
     return \%row_hash;
 }
 
@@ -120,5 +149,5 @@ sub main {
 
 }
 
-# run it
+# run it, C style
 main();

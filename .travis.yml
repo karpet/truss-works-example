@@ -1,0 +1,8 @@
+sudo: false
+language: perl
+perl:
+    - "5.26"
+    - "5.20"
+
+install:
+  - make deps
