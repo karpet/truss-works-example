@@ -5,4 +5,4 @@ perl:
     - "5.20"
 
 install:
-  - make deps
+  - cpanm --no-skip-satisfied Search::Tools::UTF8 Text::CSV_XS Data::Dump DateTime::Format::Strptime || { cat ~/.cpanm/build.log ; false ; }
