@@ -1,6 +1,8 @@
 Truss example project
 ----------------------
 
+[![Build Status](https://travis-ci.org/karpet/truss-works-example.svg?branch=master)](https://travis-ci.org/karpet/truss-works-example)
+
 This Perl project uses some CPAN modules to test and coerce UTF-8 and parse CSV files.
 
 ## Depedencies
