@@ -9,6 +9,8 @@ This Perl project uses some CPAN modules to test and coerce UTF-8 and parse CSV 
 
 Requires a modern (> 5.10) Perl version.
 
+If you lack permissions to install CPAN modules on your system, you might prefer to use [perlbrew](https://perlbrew.pl/).
+
 To install the necessary CPAN modules, try:
 
 ```
